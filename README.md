@@ -182,16 +182,15 @@ http://localhost:3000
 
 ## Home Page
 
-Add screenshot here.
+![Home Page](./screenshots/home.png)
 
 ## New Job Page
 
-Add screenshot here.
+![New Job](./screenshots/new-job.png)
 
 ## Job Detail Page
 
-Add screenshot here.
-
+![Detail Page](./screenshots/detailS.png)
 ---
 
 # Sample Job Request
@@ -227,14 +226,6 @@ Add screenshot here.
 * Advanced search filters
 * Email notifications
 * Pagination
-
----
-
-# Author
-
-Nipun Jayakody
-
-GitHub: [https://github.com/your-username](https://github.com/your-username)
 
 ---
 

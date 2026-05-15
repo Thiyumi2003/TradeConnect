@@ -189,9 +189,9 @@ http://localhost:3000
 
 <p align="center">
   <h2>Home Page</h2>
-  <img src="./screenshots/home.png" width="48%" />
+  <img src="./screenshots/home.png" width="40%" />
   <h2>New Job Page</h2>
-  <img src="./screenshots/new-job.png" width="48%" />
+  <img src="./screenshots/new-job.png" width="40%" />
 </p>
 
 ## Job Detail Page

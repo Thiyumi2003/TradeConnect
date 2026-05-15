@@ -1,93 +1,243 @@
-# TradeConnect Service Request Board
+# TradeConnect – Mini Service Request Board
 
-A small full-stack assessment project built with Next.js, Express, and MongoDB.
+TradeConnect is a full-stack web application built for homeowners and local tradespeople to manage service requests efficiently. Homeowners can post repair or maintenance requests, while tradespeople can browse available jobs, view details, and update the work status.
 
-## What it does
+This project was developed as part of a technical assessment using Next.js, Express.js, and MongoDB.
 
-- Lists all job requests on the home page with a category filter
-- Supports keyword search across title and description
-- Creates a new job request through a form with field validation
-- Shows a job detail page where status can be changed or the job can be deleted
-- Success and error notifications
-- Empty state messaging for better UX
-- Uses a separate Express API backed by MongoDB and Mongoose
+---
 
-## Project Structure
+# Live Demo
 
-- `frontend` - Next.js App Router frontend
-- `backend` - Express API and MongoDB models
+Frontend: [https://your-frontend-url.vercel.app](https://your-frontend-url.vercel.app)
 
-## Setup
+Backend API: [https://your-backend-url.onrender.com](https://your-backend-url.onrender.com)
 
-1. Install dependencies from the repo root:
+---
+
+# Features
+
+## Core Features
+
+* View all service requests
+* Create new job requests
+* View individual job details
+* Update job status
+* Delete job requests
+* Search jobs by keyword
+* Filter jobs by category
+* Filter jobs by status
+* Responsive modern UI
+* Form validation
+* REST API integration
+
+## Optional Features Implemented
+
+* Keyword search
+* Status filtering
+* Deployment to cloud platforms
+* Professional responsive UI
+
+---
+
+# Tech Stack
+
+## Frontend
+
+* Next.js (App Router)
+* React.js
+* Tailwind CSS
+* Axios
+* Lucide React Icons
+
+## Backend
+
+* Node.js
+* Express.js
+* MongoDB Atlas
+* Mongoose
+
+## Deployment
+
+* Frontend: Vercel
+* Backend: Render
+* Database: MongoDB Atlas
+
+---
+
+# Project Structure
+
+```bash
+tradeconnect/
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── public/
+│   └── lib/
+│
+├── backend/
+│   ├── models/
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   └── server.js
+│
+└── README.md
+```
+
+---
+
+# API Endpoints
+
+| Method | Endpoint      | Description       |
+| ------ | ------------- | ----------------- |
+| GET    | /api/jobs     | Get all jobs      |
+| GET    | /api/jobs/:id | Get single job    |
+| POST   | /api/jobs     | Create a new job  |
+| PATCH  | /api/jobs/:id | Update job status |
+| DELETE | /api/jobs/:id | Delete a job      |
+
+---
+
+# Installation Guide
+
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/your-username/tradeconnect.git
+```
+
+---
+
+# Backend Setup
+
+## Navigate to backend
+
+```bash
+cd backend
+```
+
+## Install dependencies
 
 ```bash
 npm install
 ```
 
-2. Create `backend/.env` from the example file and set your MongoDB connection string.
+## Create .env file
 
-3. Start both apps:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+```
+
+## Start backend server
 
 ```bash
 npm run dev
 ```
 
-The frontend runs on `http://localhost:3000` and the backend on `http://localhost:4000` by default.
-
-## Environment Variables
-
-### backend/.env
-
-- `MONGODB_URI` - MongoDB connection string
-- `PORT` - API port, defaults to `4000`
-- `FRONTEND_URL` - Allowed frontend origin, defaults to `http://localhost:3000`
-
-### frontend/.env.local
-
-- `NEXT_PUBLIC_API_BASE_URL` - Backend base URL, defaults to `http://localhost:4000`
-
-## API
-
-- `GET /api/jobs` - list jobs, optionally filter with `?category=Plumbing&status=Open&q=tap`
-- `GET /api/jobs/:id` - get one job
-- `POST /api/jobs` - create a job
-- `PATCH /api/jobs/:id` - update status only
-- `DELETE /api/jobs/:id` - delete a job
-
-## Seed Data
-
-Run the backend seed script to insert sample job requests:
+Server runs on:
 
 ```bash
-npm run seed
+http://localhost:5000
 ```
 
-## Tests
+---
 
-Run backend endpoint tests:
+# Frontend Setup
+
+## Navigate to frontend
 
 ```bash
-npm test --workspace backend
+cd frontend
 ```
 
-## Deployment
+## Install dependencies
 
-### Frontend (Vercel)
+```bash
+npm install
+```
 
-1. Push code to GitHub
-2. Go to [vercel.com](https://vercel.com)
-3. Import your repository
-4. Set environment variable `NEXT_PUBLIC_API_BASE_URL` to your backend URL
-5. Deploy
+## Create .env.local file
 
-### Backend (Render or Railway)
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
 
-1. Push code to GitHub
-2. Create new Web Service on Render or Railway
-3. Connect your repository
-4. Set environment variables:
-   - `MONGODB_URI` - your MongoDB Atlas connection string
-   - `PORT` - `4000`
-   - `FRONTEND_URL` - your Vercel frontend URL
-5. Deploy
+## Start frontend
+
+```bash
+npm run dev
+```
+
+Frontend runs on:
+
+```bash
+http://localhost:3000
+```
+
+---
+
+# Screenshots
+
+## Home Page
+
+Add screenshot here.
+
+## New Job Page
+
+Add screenshot here.
+
+## Job Detail Page
+
+Add screenshot here.
+
+---
+
+# Sample Job Request
+
+```json
+{
+  "title": "Leaking kitchen tap",
+  "description": "Kitchen tap leaking continuously since yesterday evening.",
+  "category": "Plumbing",
+  "location": "Glasgow",
+  "contactName": "Sarah Thompson",
+  "contactEmail": "sarah@example.com",
+  "status": "Open"
+}
+```
+
+---
+
+# Validation Rules
+
+* All required fields must be completed
+* Email must be valid
+* Empty submissions are prevented
+* Invalid API requests return proper error messages
+
+---
+
+# Future Improvements
+
+* JWT Authentication
+* User roles
+* File upload support
+* Advanced search filters
+* Email notifications
+* Pagination
+
+---
+
+# Author
+
+Nipun Jayakody
+
+GitHub: [https://github.com/your-username](https://github.com/your-username)
+
+---
+
+# License
+
+This project was developed for educational and assessment purposes.

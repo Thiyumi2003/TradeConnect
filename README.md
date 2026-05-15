@@ -60,7 +60,6 @@ Backend API: [https://your-backend-url.onrender.com](https://your-backend-url.on
 
 * Frontend: Vercel
 * Backend: Render
-* Database: MongoDB Atlas
 
 ---
 
@@ -72,8 +71,16 @@ tradeconnect/
 ├── frontend/
 │   ├── app/
 │   ├── components/
-│   ├── public/
 │   └── lib/
+## Screenshots
+
+<p align="left">
+  <img src="frontend/images/home%20new.png" alt="Homepage hero" width="640" />
+</p>
+
+<p align="left">
+  <img src="frontend/images/login.png" alt="New job art" width="420" />
+</p>
 │
 ├── backend/
 │   ├── models/
@@ -186,11 +193,11 @@ http://localhost:3000
 
 ## New Job Page
 
-![New Job](./screenshots/new-job.png)
+![New Job](./screenshots/new job.png)
 
 ## Job Detail Page
 
-![Detail Page](./screenshots/detailS.png)
+![Detail Page](./screenshots/details.png)
 ---
 
 # Sample Job Request

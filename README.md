@@ -190,10 +190,10 @@ http://localhost:3000
 <table>
   <tr>
     <td><img src="./screenshots/home.png" width="100%"></td>
-    <td><img src="./screenshots/detail-page.png" width="100%"></td>
+    <td><img src="./screenshots/details.png" width="100%"></td>
   </tr>
   <tr>
-    <td><img src="./screenshots/new-job.png" width="100%"></td>
+    <td><img src="./screenshots/new-job.png" width="50%"></td>
     
   </tr>
 </table>

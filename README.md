@@ -189,11 +189,11 @@ http://localhost:3000
 
 ## Home Page
 
-![Home Page](./screenshots/home.png)
+<img src="./screenshots/home.png" width="700" />
 
 ## New Job Page
 
-![New Job](./screenshots/new job.png)
+![New Job Page](./screenshots/new-job.png)
 
 ## Job Detail Page
 

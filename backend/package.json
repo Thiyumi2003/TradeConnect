@@ -7,6 +7,7 @@
     "dev": "node src/server.js",
     "start": "node src/server.js",
     "seed": "node scripts/seed.js",
+    "clear": "node scripts/clear.js",
     "test": "jest --runInBand"
   },
   "dependencies": {

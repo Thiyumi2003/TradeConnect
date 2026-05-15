@@ -1,6 +1,6 @@
 import './globals.css';
-import Link from 'next/link';
-import AuthNav from '../components/AuthNav';
+import Notification from '../components/Notification';
+import SiteHeader from '../components/SiteHeader';
 
 export const metadata = {
   title: 'TradeConnect',
@@ -12,18 +12,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <div className="app-shell">
-          <header className="topbar">
-            <Link href="/" className="brand">
-              TradeConnect
-            </Link>
-            <nav className="topnav">
-              <Link href="/">Jobs</Link>
-              <Link href="/jobs/new" className="nav-cta">
-                New Job
-              </Link>
-              <AuthNav />
-            </nav>
-          </header>
+          <SiteHeader />
+          <Notification />
           <main className="main-content">{children}</main>
         </div>
       </body>

@@ -6,13 +6,15 @@ const JobRequest = require('../src/models/JobRequest');
 
 const jobs = [
   {
-    title: 'Leaking tap',
-    description: 'Kitchen tap dripping continuously and needs replacement washers.',
+    title: 'Leaking kitchen tap',
+    description: 'Kitchen tap has been leaking continuously since yesterday evening. Water pressure seems normal but the tap won\'t stop dripping.',
     category: 'Plumbing',
     location: 'Glasgow',
     contactName: 'Sarah Thompson',
-    contactEmail: 'sarah@example.com',
+    contactEmail: 'sarah.thompson@example.com',
     status: 'Open',
+    createdAt: new Date('2026-05-14T05:00:00.000Z'),
+    updatedAt: new Date('2026-05-14T05:00:00.000Z'),
   },
   {
     title: 'Fuse box inspection',
@@ -56,6 +58,18 @@ async function seed() {
   await connectDB();
   await JobRequest.deleteMany({});
   await JobRequest.insertMany(jobs);
+
+  const exactPostedTime = new Date('2026-05-14T05:00:00.000Z');
+  await JobRequest.collection.updateOne(
+    { title: 'Leaking kitchen tap' },
+    {
+      $set: {
+        createdAt: exactPostedTime,
+        updatedAt: exactPostedTime,
+      },
+    }
+  );
+
   console.log('Seed complete');
   await mongoose.connection.close();
 }

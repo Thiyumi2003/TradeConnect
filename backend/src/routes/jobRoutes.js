@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const JobRequest = require('../models/JobRequest');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
-const requireAuth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -67,7 +66,6 @@ router.get(
 
 router.post(
   '/',
-  requireAuth,
   asyncHandler(async (req, res) => {
     const title = normalizeText(req.body.title);
     const description = normalizeText(req.body.description);
@@ -132,7 +130,6 @@ router.patch(
 
 router.delete(
   '/:id',
-  requireAuth,
   asyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
       throw new AppError('Job request not found', 404);

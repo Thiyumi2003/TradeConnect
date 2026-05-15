@@ -114,7 +114,6 @@ textarea {
 }
 
 .icon-btn,
-.login-btn,
 .nav-cta {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
@@ -136,11 +135,6 @@ textarea {
 
 .icon-btn:focus {
   outline: none;
-}
-
-.login-btn {
-  color: #fff;
-  cursor: pointer;
 }
 
 .nav-cta {
@@ -202,19 +196,6 @@ textarea {
 .hero-image {
   object-fit: cover;
   object-position: center center;
-}
-
-@media (max-width: 860px) {
-  .home-hero {
-    min-height: 0;
-  }
-
-  .hero-overlay {
-    left: 16px;
-    right: 16px;
-    top: 16px;
-    max-width: none;
-  }
 }
 
 .panel {
@@ -1153,16 +1134,8 @@ button:focus {
     justify-self: start;
   }
 
-  .home-hero {
-    grid-template-columns: 1fr;
-  }
-
   .hero-illustration {
     min-height: 300px;
-  }
-
-  .hero-benefits {
-    grid-template-columns: 1fr;
   }
 
   .filter-row {
@@ -1198,10 +1171,6 @@ button:focus {
   .main-content {
     width: calc(100vw - 18px);
     padding: 10px 0 24px;
-  }
-
-  .hero-copy {
-    padding: 24px 18px;
   }
 
   .grid-cards {

@@ -16,9 +16,6 @@ import {
   MapPin, 
   Calendar, 
   ArrowRight,
-  CheckCircle2,
-  Users,
-  ShieldCheck,
   LayoutGrid
 } from 'lucide-react';
 

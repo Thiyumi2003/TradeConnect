@@ -187,17 +187,16 @@ http://localhost:3000
 
 # Screenshots
 
-<p align="center">
-  <h2>Home Page</h2>
-  <img src="./screenshots/home.png" width="40%" />
-  <h2>New Job Page</h2>
-  <img src="./screenshots/new-job.png" width="40%" />
-</p>
-
-## Job Detail Page
-
-<img src="./screenshots/details.png" width="500" />
----
+<table>
+  <tr>
+    <td><img src="./screenshots/home.png" width="100%"></td>
+    <td><img src="./screenshots/detail-page.png" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="./screenshots/new-job.png" width="100%"></td>
+    
+  </tr>
+</table>
 
 # Sample Job Request
 

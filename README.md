@@ -189,11 +189,14 @@ http://localhost:3000
 
 <table>
   <tr>
-    <td><img src="./screenshots/home.png" width="100%"><br/><h2>Homepage</h2>td>
-    <td><img src="./screenshots/details.png" width="100%"></td>
+    <td><h2 style="text-align: center;">Home Page</h2><br/>
+    <img src="./screenshots/home.png" width="100%"><td>
+    <td><h2 style="text-align: center;">Details Page</h2><br/>
+    <img src="./screenshots/details.png" width="100%"></td>
   </tr>
   <tr>
-    <td><img src="./screenshots/new-job.png" width="100%"></td>
+    <td><h2 style="text-align: center;">New Job Page</h2><br/>
+    <img src="./screenshots/new-job.png" width="100%"></td>
     
   </tr>
 </table>

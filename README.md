@@ -6,6 +6,79 @@ This project was developed as part of a technical assessment using Next.js, Expr
 
 ---
 
+# Deployment Guide
+
+The easiest free setup for this project is:
+
+* Frontend: Vercel
+* Backend: Render
+* Database: MongoDB Atlas free tier
+
+## Environment Variables
+
+Backend environment:
+
+```env
+MONGODB_URI=your_mongodb_atlas_connection_string
+PORT=4000
+FRONTEND_URL=https://your-frontend.vercel.app
+JWT_SECRET=your_long_random_secret
+```
+
+Frontend environment:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=https://your-backend.onrender.com
+```
+
+## 1. Create MongoDB Atlas Database
+
+1. Create a free MongoDB Atlas account.
+2. Create a new cluster.
+3. Create a database user and password.
+4. Add your IP address to the network access list, or allow access from anywhere for the assessment.
+5. Copy the connection string and use it as `MONGODB_URI`.
+
+## 2. Deploy Backend to Render
+
+1. Push the project to GitHub.
+2. Open Render and create a new **Web Service** from the GitHub repo.
+3. Set the root directory to `backend`.
+4. Use these settings:
+  * Build command: `npm install`
+  * Start command: `npm start`
+5. Add these environment variables in Render:
+  * `MONGODB_URI`
+  * `PORT` = `4000`
+  * `FRONTEND_URL` = your final Vercel URL
+  * `JWT_SECRET` = any long random string
+6. Deploy and copy the backend URL.
+
+## 3. Deploy Frontend to Vercel
+
+1. Open Vercel and import the same GitHub repository.
+2. Set the project root to `frontend`.
+3. Add this environment variable in Vercel:
+  * `NEXT_PUBLIC_API_BASE_URL` = your Render backend URL
+4. Deploy the frontend.
+
+## 4. Update CORS After Frontend URL Is Known
+
+After Vercel gives you the production frontend URL, make sure the backend `FRONTEND_URL` value matches it exactly. If you redeploy the frontend later and the URL changes, update Render again.
+
+## 5. Quick Verification
+
+After both deployments finish:
+
+1. Open the Vercel frontend URL.
+2. Register a homeowner account.
+3. Post a job.
+4. Open the job as a tradesperson and change the status.
+
+If any API call fails, check the browser console and confirm the frontend env variable points to the deployed backend URL.
+
+---
+
 # Live Demo
 
 Frontend: [https://your-frontend-url.vercel.app](https://your-frontend-url.vercel.app)
@@ -59,7 +132,8 @@ Backend API: [https://your-backend-url.onrender.com](https://your-backend-url.on
 ## Deployment
 
 * Frontend: Vercel
-* Backend: Render
+* Backend: Render or Railway
+* Database: MongoDB Atlas
 
 ---
 

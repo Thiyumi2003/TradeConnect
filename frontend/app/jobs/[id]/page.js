@@ -7,6 +7,7 @@ import { ArrowLeft, Building2, CalendarDays, ChevronDown, MapPin, PencilLine, Tr
 import Modal from '../../../components/Modal';
 import { apiRequest } from '../../../lib/api';
 import { showSuccess, showError } from '../../../lib/notify';
+import { useAuth } from '../../../components/AuthProvider';
 
 const statusOptions = ['Open', 'In Progress', 'Closed'];
 
@@ -58,6 +59,7 @@ export default function JobDetailPage() {
   const params = useParams();
   const router = useRouter();
   const statusSelectRef = useRef(null);
+  const { ready, user } = useAuth();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [savingStatus, setSavingStatus] = useState(false);
@@ -69,6 +71,13 @@ export default function JobDetailPage() {
     let ignore = false;
 
     async function loadJob() {
+      if (!ready || !user) {
+        if (!ignore) {
+          setLoading(false);
+        }
+        return;
+      }
+
       setLoading(true);
       setError('');
 
@@ -95,7 +104,14 @@ export default function JobDetailPage() {
     return () => {
       ignore = true;
     };
-  }, [params.id]);
+  }, [params.id, ready, user]);
+
+  const isHomeowner = user?.role === 'homeowner';
+  const isTradesperson = user?.role === 'tradesperson';
+  const ownsJob = Boolean(user && job?.ownerId && String(job.ownerId) === user.id);
+  const canViewJob = isTradesperson || ownsJob;
+  const canUpdateStatus = isTradesperson;
+  const canDeleteJob = isHomeowner && ownsJob;
 
   async function handleStatusChange(event) {
     const nextStatus = event.target.value;
@@ -148,6 +164,51 @@ export default function JobDetailPage() {
     return <div className="note">Loading job details...</div>;
   }
 
+  if (!ready || !user) {
+    return (
+      <section className="auth-page">
+        <div className="auth-card form-card auth-gate">
+          <p className="hero-kicker hero-kicker-dark">Tradesperson Access</p>
+          <h1>Login to view job details</h1>
+          <p className="helper">
+            Public users can browse the home page. Login as a tradesperson to view job details and update status.
+          </p>
+          <div className="auth-actions">
+            <Link href="/login" className="primary-btn">
+              Login
+            </Link>
+            <Link href="/register" className="secondary-btn">
+              Register
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!canViewJob) {
+    return (
+      <section className="detail-page-shell">
+        <Link href="/" className="back-link">
+          <ArrowLeft size={14} /> Back to Jobs
+        </Link>
+        <div className="detail-card detail-card-empty auth-gate">
+          <p className="hero-kicker hero-kicker-dark">Access restricted</p>
+          <h1>You can only view your own jobs as a homeowner.</h1>
+          <p className="helper">Use the jobs you posted from the new job page, or sign in as a tradesperson to browse details.</p>
+          <div className="auth-actions">
+            <Link href="/jobs/new" className="primary-btn">
+              Go to New Job
+            </Link>
+            <Link href="/" className="secondary-btn">
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (error && !job) {
     return (
       <div className="detail-page-shell">
@@ -188,21 +249,25 @@ export default function JobDetailPage() {
           </div>
 
           <div className="detail-actions">
-            <button
-              type="button"
-              className="detail-outline-btn"
-              onClick={() => statusSelectRef.current?.focus()}
-            >
-              <PencilLine size={15} /> Edit Status
-            </button>
-            <button
-              type="button"
-              className="detail-outline-btn detail-delete-btn"
-              onClick={handleDeleteClick}
-              disabled={deleting}
-            >
-              <Trash2 size={15} /> {deleting ? 'Deleting...' : 'Delete Job'}
-            </button>
+            {canUpdateStatus ? (
+              <button
+                type="button"
+                className="detail-outline-btn"
+                onClick={() => statusSelectRef.current?.focus()}
+              >
+                <PencilLine size={15} /> Edit Status
+              </button>
+            ) : null}
+            {canDeleteJob ? (
+              <button
+                type="button"
+                className="detail-outline-btn detail-delete-btn"
+                onClick={handleDeleteClick}
+                disabled={deleting}
+              >
+                <Trash2 size={15} /> {deleting ? 'Deleting...' : 'Delete Job'}
+              </button>
+            ) : null}
           </div>
         </div>
 
@@ -213,35 +278,42 @@ export default function JobDetailPage() {
               <p className="detail-description">{job.description}</p>
             </section>
 
-            <section className="detail-status-panel">
-              <h2 className="detail-section-title">Update Status</h2>
-              <div className="detail-status-row">
-                <div className="detail-select-wrap">
-                  <select
-                    id="status"
-                    ref={statusSelectRef}
-                    value={job.status}
-                    onChange={handleStatusChange}
-                    disabled={savingStatus || deleting}
+            {canUpdateStatus ? (
+              <section className="detail-status-panel">
+                <h2 className="detail-section-title">Update Status</h2>
+                <div className="detail-status-row">
+                  <div className="detail-select-wrap">
+                    <select
+                      id="status"
+                      ref={statusSelectRef}
+                      value={job.status}
+                      onChange={handleStatusChange}
+                      disabled={!canUpdateStatus || savingStatus || deleting}
+                    >
+                      {statusOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="field-select-icon detail-select-icon" size={18} />
+                  </div>
+                  <button
+                    type="button"
+                    className="detail-update-btn"
+                    onClick={() => statusSelectRef.current?.focus()}
+                    disabled={!canUpdateStatus || savingStatus || deleting}
                   >
-                    {statusOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="field-select-icon detail-select-icon" size={18} />
+                    <LockKeyhole size={15} /> {savingStatus ? 'Updating Status...' : 'Update Status'}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="detail-update-btn"
-                  onClick={() => statusSelectRef.current?.focus()}
-                  disabled={savingStatus || deleting}
-                >
-                  <LockKeyhole size={15} /> {savingStatus ? 'Updating Status...' : 'Update Status'}
-                </button>
-              </div>
-            </section>
+              </section>
+            ) : (
+              <section className="detail-status-panel detail-note-panel">
+                <h2 className="detail-section-title">Job status</h2>
+                <p className="helper">Homeowners can view and delete their own jobs. Tradespeople can update the status here.</p>
+              </section>
+            )}
           </div>
 
           <aside className="detail-sidebar">

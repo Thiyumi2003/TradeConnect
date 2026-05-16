@@ -1,10 +1,24 @@
 "use client";
 
-import { ChevronDown, PencilLine } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import {
+  ChevronDown,
+  PencilLine,
+  Trash2,
+  Calendar,
+  MapPin,
+  ArrowRight,
+  Droplet,
+  Zap,
+  Paintbrush,
+  Box,
+  LayoutGrid,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { apiRequest } from '../../../lib/api';
 import { showSuccess, showError } from '../../../lib/notify';
+import { useAuth } from '../../../components/AuthProvider';
 
 const categoryOptions = ['Plumbing', 'Electrical', 'Painting', 'Joinery'];
 
@@ -17,12 +31,83 @@ const emptyForm = {
   contactEmail: '',
 };
 
+function formatDate(value) {
+  return new Date(value).toLocaleString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function statusClass(status) {
+  if (status === 'Open') return 'badge status-open';
+  if (status === 'In Progress') return 'badge status-progress';
+  return 'badge status-closed';
+}
+
+function categoryIconClass(category) {
+  if (category === 'Plumbing') return 'cat-icon cat-plumbing';
+  if (category === 'Electrical') return 'cat-icon cat-electrical';
+  if (category === 'Painting') return 'cat-icon cat-painting';
+  if (category === 'Joinery') return 'cat-icon cat-joinery';
+  return 'cat-icon';
+}
+
+function CategoryIcon({ category, size = 18 }) {
+  if (category === 'Plumbing') return <Droplet size={size} />;
+  if (category === 'Electrical') return <Zap size={size} />;
+  if (category === 'Painting') return <Paintbrush size={size} />;
+  if (category === 'Joinery') return <Box size={size} />;
+  return <LayoutGrid size={size} />;
+}
+
 export default function NewJobPage() {
   const router = useRouter();
+  const { ready, user, role } = useAuth();
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [ownJobs, setOwnJobs] = useState([]);
+  const [loadingOwnJobs, setLoadingOwnJobs] = useState(false);
+
+  const isHomeowner = user?.role === 'homeowner';
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadOwnJobs() {
+      if (!ready || !isHomeowner) {
+        setOwnJobs([]);
+        return;
+      }
+
+      setLoadingOwnJobs(true);
+
+      try {
+        const response = await apiRequest('/api/jobs/mine');
+        if (!ignore) {
+          setOwnJobs(response.data || []);
+        }
+      } catch (requestError) {
+        if (!ignore) {
+          setError(requestError.message);
+        }
+      } finally {
+        if (!ignore) {
+          setLoadingOwnJobs(false);
+        }
+      }
+    }
+
+    loadOwnJobs();
+
+    return () => {
+      ignore = true;
+    };
+  }, [isHomeowner, ready]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -64,7 +149,9 @@ export default function NewJobPage() {
       });
 
       showSuccess('Job created successfully');
-      router.push(`/jobs/${response.data._id}`);
+      setForm(emptyForm);
+      setFieldErrors({});
+      setOwnJobs((current) => [response.data, ...current]);
     } catch (requestError) {
       const message = requestError.message || 'Failed to create job';
       setError(message);
@@ -72,6 +159,50 @@ export default function NewJobPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function handleDeleteJob(jobId) {
+    const shouldDelete = window.confirm('Delete this job request?');
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    try {
+      await apiRequest(`/api/jobs/${jobId}`, { method: 'DELETE' });
+      setOwnJobs((current) => current.filter((job) => job._id !== jobId));
+      showSuccess('Job deleted successfully');
+    } catch (requestError) {
+      const message = requestError.message || 'Failed to delete job';
+      showError(message);
+      setError(message);
+    }
+  }
+
+  if (!ready) {
+    return <div className="note">Loading access...</div>;
+  }
+
+  if (!user || role !== 'homeowner') {
+    return (
+      <section className="auth-page">
+        <div className="auth-card form-card auth-gate">
+          <p className="hero-kicker hero-kicker-dark">Homeowner Access</p>
+          <h1>Login as a homeowner to post jobs</h1>
+          <p className="helper">
+            Public users can browse jobs. Homeowners can post new requests and manage their own jobs.
+          </p>
+          <div className="auth-actions">
+            <Link href="/login" className="primary-btn">
+              Login
+            </Link>
+            <Link href="/register" className="secondary-btn">
+              Register
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -189,6 +320,69 @@ export default function NewJobPage() {
 
         {error ? <div className="error form-error">{error}</div> : null}
       </div>
+
+      <section className="my-jobs-section">
+        <div className="section-heading-row">
+          <div>
+            <p className="hero-kicker hero-kicker-dark">Your jobs</p>
+            <h2>Your posted jobs</h2>
+          </div>
+          <span className="helper">{loadingOwnJobs ? 'Loading your jobs...' : `${ownJobs.length} posted job(s)`}</span>
+        </div>
+
+        {ownJobs.length === 0 ? (
+          <div className="empty-state">
+            <p className="empty-state-title">No jobs posted yet.</p>
+            <p className="empty-state-text">Your job requests will appear here after you create them.</p>
+          </div>
+        ) : null}
+
+        {ownJobs.length > 0 ? (
+          <div className="my-jobs-grid">
+            {ownJobs.map((job) => (
+              <div key={job._id} className="mine-job-card">
+                <Link href={`/jobs/${job._id}`} className="mine-job-card-link">
+                  <div className="mine-job-icon">
+                    {/* small category icon */}
+                    <span className={categoryIconClass(job.category)}>
+                      <CategoryIcon category={job.category} size={18} />
+                    </span>
+                  </div>
+
+                  <div className="mine-job-main">
+                    <div className="mine-job-top">
+                      <div>
+                        <h3 className="mine-job-title">{job.title}</h3>
+                        <p className="mine-job-meta">{job.category || 'Uncategorized'}</p>
+                      </div>
+                    </div>
+                    <p className="mine-job-description">{job.description}</p>
+                    <div className="mine-job-info">
+                      <span><Calendar size={14} /> {formatDate(job.createdAt)}</span>
+                      <span><MapPin size={14} /> {job.location || 'Location not set'}</span>
+                    </div>
+                  </div>
+                </Link>
+
+                <div className="mine-job-actions">
+                  <span className={statusClass(job.status)}>{job.status}</span>
+
+                  <button
+                    type="button"
+                    className="danger-btn mine-job-delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteJob(job._id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </section>
     </section>
   );
 }

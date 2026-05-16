@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const JobRequest = require('../models/JobRequest');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
+const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -48,6 +49,16 @@ router.get(
 );
 
 router.get(
+  '/mine',
+  requireAuth,
+  requireRole('homeowner'),
+  asyncHandler(async (req, res) => {
+    const jobs = await JobRequest.find({ ownerId: req.user.sub }).sort({ createdAt: -1 });
+    res.json({ data: jobs });
+  })
+);
+
+router.get(
   '/:id',
   asyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
@@ -66,6 +77,8 @@ router.get(
 
 router.post(
   '/',
+  requireAuth,
+  requireRole('homeowner'),
   asyncHandler(async (req, res) => {
     const title = normalizeText(req.body.title);
     const description = normalizeText(req.body.description);
@@ -95,6 +108,9 @@ router.post(
       location,
       contactName,
       contactEmail,
+      ownerId: req.user.sub,
+      ownerName: req.user.name || contactName,
+      ownerEmail: req.user.email || contactEmail,
     });
 
     res.status(201).json({ data: job });
@@ -103,6 +119,8 @@ router.post(
 
 router.patch(
   '/:id',
+  requireAuth,
+  requireRole('tradesperson'),
   asyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
       throw new AppError('Job request not found', 404);
@@ -130,9 +148,21 @@ router.patch(
 
 router.delete(
   '/:id',
+  requireAuth,
+  requireRole('homeowner'),
   asyncHandler(async (req, res) => {
     if (!isValidObjectId(req.params.id)) {
       throw new AppError('Job request not found', 404);
+    }
+
+    const existingJob = await JobRequest.findById(req.params.id);
+
+    if (!existingJob) {
+      throw new AppError('Job request not found', 404);
+    }
+
+    if (!existingJob.ownerId || existingJob.ownerId.toString() !== req.user.sub) {
+      throw new AppError('You can only delete your own jobs', 403);
     }
 
     const deletedJob = await JobRequest.findByIdAndDelete(req.params.id);

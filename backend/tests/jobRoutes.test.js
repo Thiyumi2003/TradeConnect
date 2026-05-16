@@ -6,16 +6,25 @@ jest.mock('../src/models/JobRequest', () => ({
   findByIdAndDelete: jest.fn(),
 }));
 
+jest.mock('../src/models/User', () => ({
+  findOne: jest.fn(),
+  create: jest.fn(),
+  findById: jest.fn(),
+}));
+
+const crypto = require('crypto');
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 const JobRequest = require('../src/models/JobRequest');
+const User = require('../src/models/User');
 
-describe('Job request API', () => {
+describe('TradeConnect API', () => {
+  const jobId = '507f1f77bcf86cd799439011';
+
   beforeEach(() => {
+    jest.clearAllMocks();
     process.env.JWT_SECRET = 'test-secret';
-    process.env.USER_EMAIL = 'demo@tradeconnect.com';
-    process.env.USER_PASSWORD = 'password123';
   });
 
   test('filters jobs by keyword search across title and description', async () => {
@@ -41,9 +50,47 @@ describe('Job request API', () => {
     expect(response.body.data).toHaveLength(1);
   });
 
-  test('requires a valid JWT to create a job', async () => {
-    const loginToken = jwt.sign(
-      { sub: 'demo@tradeconnect.com', email: 'demo@tradeconnect.com' },
+  test('public users cannot create jobs', async () => {
+    const response = await request(app).post('/api/jobs').send({
+      title: 'New boiler service',
+      description: 'Annual boiler check',
+      category: 'Plumbing',
+      location: 'Glasgow',
+      contactName: 'Sam',
+      contactEmail: 'sam@example.com',
+    });
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toMatch(/authentication required/i);
+  });
+
+  test('homeowners can register and post jobs', async () => {
+    User.findOne.mockResolvedValue(null);
+    User.create.mockResolvedValue({
+      _id: 'user-1',
+      name: 'Home Owner',
+      email: 'home@example.com',
+      role: 'homeowner',
+    });
+
+    const registerResponse = await request(app).post('/api/auth/register').send({
+      name: 'Home Owner',
+      email: 'home@example.com',
+      password: 'password123',
+      role: 'homeowner',
+    });
+
+    expect(registerResponse.status).toBe(201);
+    expect(registerResponse.body.token).toBeDefined();
+    expect(registerResponse.body.user.role).toBe('homeowner');
+
+    const homeownerToken = jwt.sign(
+      {
+        sub: 'user-1',
+        email: 'home@example.com',
+        name: 'Home Owner',
+        role: 'homeowner',
+      },
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
@@ -55,7 +102,7 @@ describe('Job request API', () => {
 
     const response = await request(app)
       .post('/api/jobs')
-      .set('Authorization', `Bearer ${loginToken}`)
+      .set('Authorization', `Bearer ${homeownerToken}`)
       .send({
         title: 'New boiler service',
         description: 'Annual boiler check',
@@ -66,16 +113,90 @@ describe('Job request API', () => {
       });
 
     expect(response.status).toBe(201);
-    expect(JobRequest.create).toHaveBeenCalled();
+    expect(JobRequest.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'New boiler service',
+        ownerId: 'user-1',
+        ownerName: 'Home Owner',
+        ownerEmail: 'home@example.com',
+      })
+    );
   });
 
-  test('returns a JWT for valid login credentials', async () => {
+  test('tradespeople can update job status', async () => {
+    const tradespersonToken = jwt.sign(
+      {
+        sub: 'trade-1',
+        email: 'trade@example.com',
+        name: 'Trade Person',
+        role: 'tradesperson',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    JobRequest.findByIdAndUpdate.mockResolvedValue({
+      _id: jobId,
+      status: 'In Progress',
+    });
+
+    const response = await request(app)
+      .patch(`/api/jobs/${jobId}`)
+      .set('Authorization', `Bearer ${tradespersonToken}`)
+      .send({ status: 'In Progress' });
+
+    expect(response.status).toBe(200);
+    expect(JobRequest.findByIdAndUpdate).toHaveBeenCalled();
+  });
+
+  test('homeowners can delete only their own jobs', async () => {
+    const homeownerToken = jwt.sign(
+      {
+        sub: 'user-1',
+        email: 'home@example.com',
+        name: 'Home Owner',
+        role: 'homeowner',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    JobRequest.findById.mockResolvedValue({
+      _id: jobId,
+      ownerId: 'user-1',
+    });
+    JobRequest.findByIdAndDelete.mockResolvedValue({ _id: jobId });
+
+    const response = await request(app)
+      .delete(`/api/jobs/${jobId}`)
+      .set('Authorization', `Bearer ${homeownerToken}`);
+
+    expect(response.status).toBe(204);
+    expect(JobRequest.findByIdAndDelete).toHaveBeenCalledWith(jobId);
+  });
+
+  test('returns a token for valid login credentials', async () => {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const passwordHash = crypto.scryptSync('password123', salt, 64).toString('hex');
+
+    User.findOne.mockReturnValue({
+      select: jest.fn().mockResolvedValue({
+        _id: 'user-1',
+        name: 'Home Owner',
+        email: 'home@example.com',
+        role: 'homeowner',
+        passwordSalt: salt,
+        passwordHash,
+      }),
+    });
+
     const response = await request(app).post('/api/auth/login').send({
-      email: 'demo@tradeconnect.com',
+      email: 'home@example.com',
       password: 'password123',
     });
 
     expect(response.status).toBe(200);
     expect(response.body.token).toBeDefined();
+    expect(response.body.user.role).toBe('homeowner');
   });
 });

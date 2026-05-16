@@ -34,6 +34,23 @@ const jobRequestSchema = new mongoose.Schema(
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, 'Contact email must be valid'],
     },
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+      index: true,
+    },
+    ownerName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    ownerEmail: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: '',
+    },
     status: {
       type: String,
       enum: ['Open', 'In Progress', 'Closed'],

@@ -7,7 +7,7 @@ function requireAuth(req, res, next) {
   const jwtSecret = process.env.JWT_SECRET || 'tradeconnect-secret';
 
   if (!token) {
-    next(new AppError('Login required', 401));
+    next(new AppError('Authentication required', 401));
     return;
   }
 
@@ -19,4 +19,23 @@ function requireAuth(req, res, next) {
   }
 }
 
-module.exports = requireAuth;
+function requireRole(...roles) {
+  return (req, res, next) => {
+    if (!req.user) {
+      next(new AppError('Authentication required', 401));
+      return;
+    }
+
+    if (!roles.includes(req.user.role)) {
+      next(new AppError('You do not have permission to perform this action', 403));
+      return;
+    }
+
+    next();
+  };
+}
+
+module.exports = {
+  requireAuth,
+  requireRole,
+};

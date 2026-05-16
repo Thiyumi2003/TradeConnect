@@ -93,14 +93,24 @@ TradeConnect/
       <img src="./screenshots/home.png" width="100%">
     </td>
     <td>
-      <h2 align="center">Details Page</h2>
-      <img src="./screenshots/details.png" width="100%">
+      <h2 align="center">Register Page</h2>
+      <img src="./screenshots/register.png" width="100%">
     </td>
   </tr>
   <tr>
     <td>
-      <h2 align="center">New Job Page</h2>
-      <img src="./screenshots/new-job.png" width="100%">
+      <h2 align="center">Login Page</h2>
+      <img src="./screenshots/login.png" width="100%">
+    </td>
+    <td>
+      <h2 align="center">Home Owner Post New Job</h2>
+      <img src="./screenshots/new_job.png" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h2 align="center">Tradesperson Update Status</h2>
+      <img src="./screenshots/update_status.png" width="100%">
     </td>
   </tr>
 </table>
@@ -145,7 +155,7 @@ TradeConnect/
 ## 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/your-repository-name.git
+git clone https://github.com/Thiyumi2003/TradeConnect.git
 cd TradeConnect
 ```
 
@@ -300,13 +310,7 @@ Hosted on MongoDB Atlas.
 
 # Author
 
-Nipun Jayakody
+Thiyumi Upasari
 
 GitHub:  
-https://github.com/your-github-username
-
----
-
-# License
-
-This project was created for a Full-Stack Developer Intern technical assessment.
+https://github.com/Thiyumi2003

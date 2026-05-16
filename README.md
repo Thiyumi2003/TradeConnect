@@ -1,260 +1,85 @@
 # TradeConnect – Mini Service Request Board
 
-TradeConnect is a full-stack web application built for homeowners and local tradespeople to manage service requests efficiently. Homeowners can post repair or maintenance requests, while tradespeople can browse available jobs, view details, and update the work status.
-
-This project was developed as part of a technical assessment using Next.js, Express.js, and MongoDB.
-
----
-
-# Deployment Guide
-
-The easiest free setup for this project is:
-
-* Frontend: Vercel
-* Backend: Render
-* Database: MongoDB Atlas free tier
-
-## Environment Variables
-
-Backend environment:
-
-```env
-MONGODB_URI=your_mongodb_atlas_connection_string
-PORT=4000
-FRONTEND_URL=https://your-frontend.vercel.app
-JWT_SECRET=your_long_random_secret
-```
-
-Frontend environment:
-
-```env
-NEXT_PUBLIC_API_BASE_URL=https://your-backend.onrender.com
-```
-
-## 1. Create MongoDB Atlas Database
-
-1. Create a free MongoDB Atlas account.
-2. Create a new cluster.
-3. Create a database user and password.
-4. Add your IP address to the network access list, or allow access from anywhere for the assessment.
-5. Copy the connection string and use it as `MONGODB_URI`.
-
-## 2. Deploy Backend to Render
-
-1. Push the project to GitHub.
-2. Open Render and create a new **Web Service** from the GitHub repo.
-3. Set the root directory to `backend`.
-4. Use these settings:
-  * Build command: `npm install`
-  * Start command: `npm start`
-5. Add these environment variables in Render:
-  * `MONGODB_URI`
-  * `PORT` = `4000`
-  * `FRONTEND_URL` = your final Vercel URL
-  * `JWT_SECRET` = any long random string
-6. Deploy and copy the backend URL.
-
-## 3. Deploy Frontend to Vercel
-
-1. Open Vercel and import the same GitHub repository.
-2. Set the project root to `frontend`.
-3. Add this environment variable in Vercel:
-  * `NEXT_PUBLIC_API_BASE_URL` = your Render backend URL
-4. Deploy the frontend.
-
-## 4. Update CORS After Frontend URL Is Known
-
-After Vercel gives you the production frontend URL, make sure the backend `FRONTEND_URL` value matches it exactly. If you redeploy the frontend later and the URL changes, update Render again.
-
-## 5. Quick Verification
-
-After both deployments finish:
-
-1. Open the Vercel frontend URL.
-2. Register a homeowner account.
-3. Post a job.
-4. Open the job as a tradesperson and change the status.
-
-If any API call fails, check the browser console and confirm the frontend env variable points to the deployed backend URL.
+TradeConnect is a full-stack service request board where public users can browse posted jobs, homeowners can post and delete their own jobs, and tradespeople can view job details and update job status.
 
 ---
 
 # Live Demo
 
-Frontend: [https://your-frontend-url.vercel.app](https://your-frontend-url.vercel.app)
+Frontend Demo:  
+https://trade-connect-frontend.vercel.app
 
-Backend API: [https://your-backend-url.onrender.com](https://your-backend-url.onrender.com)
+Backend API:  
+https://tradeconnect-backend-a3q9.onrender.com
+
+Jobs API Endpoint:  
+https://tradeconnect-backend-a3q9.onrender.com/api/jobs
 
 ---
 
 # Features
 
-## Core Features
+## Public Users
+- View all posted jobs
+- Search jobs
+- Filter jobs by category and status
 
-* View all service requests
-* Create new job requests
-* View individual job details
-* Update job status
-* Delete job requests
-* Search jobs by keyword
-* Filter jobs by category
-* Filter jobs by status
-* Responsive modern UI
-* Form validation
-* REST API integration
+## Homeowners
+- Register and login
+- Post new service requests
+- View own posted jobs
+- Delete own jobs
 
-## Optional Features Implemented
+## Tradespeople
+- Register and login
+- View job details
+- Update job status
 
-* Keyword search
-* Status filtering
-* Deployment to cloud platforms
-* Professional responsive UI
+## Additional Features
+- JWT Authentication
+- Password hashing with bcrypt
+- Responsive modern UI
+- REST API integration
+- MongoDB Atlas database
+- Cloud deployment
 
 ---
 
 # Tech Stack
 
 ## Frontend
-
-* Next.js (App Router)
-* React.js
-* Tailwind CSS
-* Axios
-* Lucide React Icons
+- Next.js
+- React.js
+- Tailwind CSS
+- Axios
+- Lucide React Icons
 
 ## Backend
-
-* Node.js
-* Express.js
-* MongoDB Atlas
-* Mongoose
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT Authentication
+- bcryptjs
 
 ## Deployment
-
-* Frontend: Vercel
-* Backend: Render or Railway
-* Database: MongoDB Atlas
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
 
 ---
 
 # Project Structure
 
 ```bash
-tradeconnect/
-│
+TradeConnect/
 ├── frontend/
-│   ├── app/
-│   ├── components/
-│   └── lib/
-## Screenshots
-
-<p align="left">
-  <img src="frontend/images/home%20new.png" alt="Homepage hero" width="640" />
-</p>
-
-<p align="left">
-  <img src="frontend/images/login.png" alt="New job art" width="420" />
-</p>
-│
 ├── backend/
-│   ├── models/
-│   ├── routes/
-│   ├── controllers/
-│   ├── middleware/
-│   └── server.js
-│
+├── screenshots/
+│   ├── home.png
+│   ├── details.png
+│   └── new-job.png
 └── README.md
-```
-
----
-
-# API Endpoints
-
-| Method | Endpoint      | Description       |
-| ------ | ------------- | ----------------- |
-| GET    | /api/jobs     | Get all jobs      |
-| GET    | /api/jobs/:id | Get single job    |
-| POST   | /api/jobs     | Create a new job  |
-| PATCH  | /api/jobs/:id | Update job status |
-| DELETE | /api/jobs/:id | Delete a job      |
-
----
-
-# Installation Guide
-
-## 1. Clone Repository
-
-```bash
-git clone https://github.com/your-username/tradeconnect.git
-```
-
----
-
-# Backend Setup
-
-## Navigate to backend
-
-```bash
-cd backend
-```
-
-## Install dependencies
-
-```bash
-npm install
-```
-
-## Create .env file
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-```
-
-## Start backend server
-
-```bash
-npm run dev
-```
-
-Server runs on:
-
-```bash
-http://localhost:5000
-```
-
----
-
-# Frontend Setup
-
-## Navigate to frontend
-
-```bash
-cd frontend
-```
-
-## Install dependencies
-
-```bash
-npm install
-```
-
-## Create .env.local file
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-```
-
-## Start frontend
-
-```bash
-npm run dev
-```
-
-Frontend runs on:
-
-```bash
-http://localhost:3000
 ```
 
 ---
@@ -263,24 +88,184 @@ http://localhost:3000
 
 <table>
   <tr>
-    <td><h2 style="text-align: center;">Home Page</h2><br/>
-    <img src="./screenshots/home.png" width="100%"><td>
-    <td><h2 style="text-align: center;">Details Page</h2><br/>
-    <img src="./screenshots/details.png" width="100%"></td>
+    <td>
+      <h2 align="center">Home Page</h2>
+      <img src="./screenshots/home.png" width="100%">
+    </td>
+    <td>
+      <h2 align="center">Details Page</h2>
+      <img src="./screenshots/details.png" width="100%">
+    </td>
   </tr>
   <tr>
-    <td><h2 style="text-align: center;">New Job Page</h2><br/>
-    <img src="./screenshots/new-job.png" width="100%"></td>
-    
+    <td>
+      <h2 align="center">New Job Page</h2>
+      <img src="./screenshots/new-job.png" width="100%">
+    </td>
   </tr>
 </table>
 
-# Sample Job Request
+---
+
+# User Roles Workflow
+
+## Public User
+- Can access home page
+- Can browse all jobs
+- Can search and filter jobs
+
+## Homeowner
+- Can register/login
+- Can create service requests
+- Can delete own posted jobs
+
+## Tradesperson
+- Can register/login
+- Can view detailed job information
+- Can update job status
+
+---
+
+# API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register user |
+| POST | `/api/auth/login` | Login user |
+| GET | `/api/jobs` | Get all jobs |
+| GET | `/api/jobs/:id` | Get single job |
+| POST | `/api/jobs` | Create new job |
+| PATCH | `/api/jobs/:id/status` | Update job status |
+| DELETE | `/api/jobs/:id` | Delete job |
+
+---
+
+# Local Installation
+
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/your-username/your-repository-name.git
+cd TradeConnect
+```
+
+---
+
+# Backend Setup
+
+## Install Dependencies
+
+```bash
+cd backend
+npm install
+```
+
+## Create .env File
+
+Create a `.env` file inside backend folder:
+
+```env
+PORT=4000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+```
+
+## Run Backend
+
+```bash
+npm run dev
+```
+
+Backend runs on:
+
+```txt
+http://localhost:4000
+```
+
+---
+
+# Frontend Setup
+
+## Install Dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+## Create .env.local File
+
+Create a `.env.local` file inside frontend folder:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+```
+
+## Run Frontend
+
+```bash
+npm run dev
+```
+
+Frontend runs on:
+
+```txt
+http://localhost:3000
+```
+
+---
+
+# Environment Variables
+
+## Backend
+
+```env
+PORT=4000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+```
+
+## Frontend
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+```
+
+## Production Frontend Variable
+
+```env
+NEXT_PUBLIC_API_BASE_URL=https://tradeconnect-backend-a3q9.onrender.com
+```
+
+---
+
+# Deployment
+
+## Frontend Deployment
+Hosted on Vercel:
+
+```txt
+https://trade-connect-frontend.vercel.app
+```
+
+## Backend Deployment
+Hosted on Render:
+
+```txt
+https://tradeconnect-backend-a3q9.onrender.com
+```
+
+## Database
+Hosted on MongoDB Atlas.
+
+---
+
+# Sample Job Data
 
 ```json
 {
   "title": "Leaking kitchen tap",
-  "description": "Kitchen tap leaking continuously since yesterday evening.",
+  "description": "Kitchen tap has been leaking continuously since yesterday evening.",
   "category": "Plumbing",
   "location": "Glasgow",
   "contactName": "Sarah Thompson",
@@ -291,26 +276,37 @@ http://localhost:3000
 
 ---
 
-# Validation Rules
+# Validation Features
 
-* All required fields must be completed
-* Email must be valid
-* Empty submissions are prevented
-* Invalid API requests return proper error messages
+- Required field validation
+- Email format validation
+- Protected routes
+- Role-based authorization
+- JWT authentication
+- Password hashing
 
 ---
 
 # Future Improvements
 
-* JWT Authentication
-* User roles
-* File upload support
-* Advanced search filters
-* Email notifications
-* Pagination
+- Image upload support
+- Email notifications
+- Real-time chat
+- Advanced filtering
+- Pagination
+- Ratings and reviews
+
+---
+
+# Author
+
+Nipun Jayakody
+
+GitHub:  
+https://github.com/your-github-username
 
 ---
 
 # License
 
-This project was developed for educational and assessment purposes.
+This project was created for a Full-Stack Developer Intern technical assessment.
